@@ -93,6 +93,7 @@ import org.json.JSONException;
 public class CustomWebViewManager extends SimpleViewManager<WebView> {
 
     protected static final String REACT_CLASS = "RNCustomWebView";
+    private CustomWebViewPackage aPackage;
 
     protected static final String HTML_ENCODING = "UTF-8";
     protected static final String HTML_MIME_TYPE = "text/html";
@@ -352,7 +353,7 @@ public class CustomWebViewManager extends SimpleViewManager<WebView> {
         // webView.setWebChromeClient(new VideoWebChromeClient(reactContext.getCurrentActivity(), webView) {
         //
         ReactWebView webView = createReactWebViewInstance(reactContext);
-        webView.setWebChromeClient(new VideoWebChromeClient(reactContext.getCurrentActivity(), webView, reactContext));
+        webView.setWebChromeClient(new VideoWebChromeClient(reactContext.getCurrentActivity(), webView, reactContext, this));
         //     @Override
         //     public boolean onConsoleMessage(ConsoleMessage message) {
         //         if (ReactBuildConfig.DEBUG) {
@@ -599,4 +600,17 @@ public class CustomWebViewManager extends SimpleViewManager<WebView> {
         EventDispatcher eventDispatcher = reactContext.getNativeModule(UIManagerModule.class).getEventDispatcher();
         eventDispatcher.dispatchEvent(event);
     }
+
+    public CustomWebViewPackage getPackage() {
+        return this.aPackage;
+    }
+
+    public void setPackage(CustomWebViewPackage aPackage) {
+        this.aPackage = aPackage;
+    }
+
+    public CustomWebViewModule getModule() {
+        return this.aPackage.getModule();
+    }
+
 }

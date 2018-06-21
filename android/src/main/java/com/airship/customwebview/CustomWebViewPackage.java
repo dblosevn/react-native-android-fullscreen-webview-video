@@ -1,6 +1,7 @@
 
 package com.airship.customwebview;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -11,13 +12,30 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
 
 public class CustomWebViewPackage implements ReactPackage {
-  @Override
-  public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-    return Collections.emptyList();
-  }
+  private CustomWebViewManager manager;
+  private CustomWebViewModule module;
 
   @Override
   public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
-    return Arrays.<ViewManager>asList(new CustomWebViewManager());
+    manager = new CustomWebViewManager();
+    manager.setPackage(this);
+    return Arrays.<ViewManager>asList(manager);
+  }
+
+  @Override
+  public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
+    List<NativeModule> modules = new ArrayList<>();
+    module = new CustomWebViewModule(reactContext);
+    module.setPackage(this);
+    modules.add(module);
+    return modules;
+  }
+
+  public CustomWebViewManager getManager() {
+    return manager;
+  }
+
+  public CustomWebViewModule getModule() {
+    return module;
   }
 }

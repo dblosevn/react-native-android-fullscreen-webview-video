@@ -3,11 +3,15 @@ package com.airship.customwebview;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.ConsoleMessage;
+import android.webkit.GeolocationPermissions;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
@@ -17,6 +21,7 @@ import com.facebook.react.ReactRootView;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.common.build.ReactBuildConfig;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ThemedReactContext;
 
@@ -39,13 +44,40 @@ public class VideoWebChromeClient extends WebChromeClient {
   public Integer nbFois;
   private ViewGroup.LayoutParams paramsNotFullscreen;
   private ThemedReactContext mReactContext;
+  private CustomWebViewManager mViewManager;
 
-  public VideoWebChromeClient(Activity activity, WebView webView, ThemedReactContext reactContext) {
+  public VideoWebChromeClient(Activity activity, WebView webView, ThemedReactContext reactContext, CustomWebViewManager viewManager) {
     mWebView = webView;
     mActivity = activity;
     isVideoFullscreen = false;
     nbFois = 0;
     mReactContext = reactContext;
+    mViewManager = viewManager;
+  }
+  @Override
+  public boolean onConsoleMessage(ConsoleMessage message) {
+    if (ReactBuildConfig.DEBUG) {
+      return super.onConsoleMessage(message);
+    }
+    // Ignore console logs in non debug builds.
+    return true;
+  }
+
+  @Override
+  public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
+    callback.invoke(origin, true, false);
+  }
+
+  // this is the addition method to react-native built-in
+  // it calls the photo picker intent in a separate module
+  // so all the parts that need to can access other bits in scope
+  // this is the way https://github.com/hushicai/ReactNativeAndroidWebView did it
+  public boolean onShowFileChooser(
+          WebView webView,
+          ValueCallback<Uri[]> filePathCallback,
+          FileChooserParams fileChooserParams
+  ) {
+    return mViewManager.getModule().startPhotoPickerIntent(filePathCallback, fileChooserParams);
   }
 
   @Override
