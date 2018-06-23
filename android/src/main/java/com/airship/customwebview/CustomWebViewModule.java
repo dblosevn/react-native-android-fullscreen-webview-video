@@ -3,6 +3,8 @@ package com.airship.customwebview;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -16,9 +18,12 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -36,9 +41,10 @@ public class CustomWebViewModule extends ReactContextBaseJavaModule implements A
     private CustomWebViewPackage aPackage;
     private ValueCallback<Uri[]> filePathCallback;
     private Uri outputFileUri;
+    File capturedFile;
+    private boolean forceDefaultMimeTypes = false;
 
-    // @todo this could be configured from JS
-    final String[] DEFAULT_MIME_TYPES = {"image/*", "video/*"};
+    ArrayList<String> DEFAULT_MIME_TYPES = new ArrayList<String>();
 
     final String TAKE_PHOTO = "Take a photo…";
     final String TAKE_VIDEO = "Record a video…";
@@ -48,6 +54,8 @@ public class CustomWebViewModule extends ReactContextBaseJavaModule implements A
     public CustomWebViewModule(ReactApplicationContext context) {
         super(context);
         context.addActivityEventListener(this);
+        DEFAULT_MIME_TYPES.add("image/*");
+        DEFAULT_MIME_TYPES.add("video/*");
     }
 
     @Override
@@ -68,7 +76,28 @@ public class CustomWebViewModule extends ReactContextBaseJavaModule implements A
         case REQUEST_CAMERA:
             if (resultCode == RESULT_OK) {
                 Log.i("RESULT_OK", outputFileUri.toString());
-                filePathCallback.onReceiveValue(new Uri[] { outputFileUri });
+                try {
+                    FileOutputStream out = null;
+                    Bitmap bmp = ImageUtils.handleSamplingAndRotationBitmap(getReactApplicationContext(), outputFileUri);
+                    try {
+                        out = new FileOutputStream(capturedFile.getPath());
+                        bmp.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                        // PNG is a lossless format, the compression factor (100) is ignored
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        try {
+                            if (out != null) {
+                                out.close();
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        filePathCallback.onReceiveValue(new Uri[] { outputFileUri });
+                    }
+                } catch (IOException ex) {
+                    filePathCallback.onReceiveValue(new Uri[] { outputFileUri });
+                }
             } else {
                 filePathCallback.onReceiveValue(null);
             }
@@ -114,7 +143,7 @@ public class CustomWebViewModule extends ReactContextBaseJavaModule implements A
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 if (items[item].equals(TAKE_PHOTO)) {
-                    startCamera(MediaStore.ACTION_IMAGE_CAPTURE, "image-", ".jpg");
+                    startCamera(MediaStore.ACTION_IMAGE_CAPTURE, "image-", ".png");
                 } else if (items[item].equals(TAKE_VIDEO)) {
                     startCamera(MediaStore.ACTION_VIDEO_CAPTURE, "video-", ".mp4");
                 } else if (items[item].equals(CHOOSE_FILE)) {
@@ -125,7 +154,6 @@ public class CustomWebViewModule extends ReactContextBaseJavaModule implements A
             }
         });
         builder.show();
-
         return true;
     }
 
@@ -146,7 +174,7 @@ public class CustomWebViewModule extends ReactContextBaseJavaModule implements A
         // Create the File where the photo should go
         try {
             String packageName = getCurrentActivity().getPackageName();
-            File capturedFile = createCapturedFile(prefix, suffix);
+            capturedFile = createCapturedFile(prefix, suffix);
             outputFileUri = FileProvider.getUriForFile(getReactApplicationContext(), getCurrentActivity().getPackageName() + ".fileprovider", capturedFile);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
             getCurrentActivity().startActivityForResult(intent, REQUEST_CAMERA);
@@ -154,7 +182,17 @@ public class CustomWebViewModule extends ReactContextBaseJavaModule implements A
             Log.e("CREATE FILE", "Error occurred while creating the File", ex);
         }
     }
-
+    public void setForceDefaultMimeTypes(boolean enabled) {
+        forceDefaultMimeTypes = enabled;
+    }
+    public void setDefaultMimeTypes(String type) {
+        DEFAULT_MIME_TYPES.clear();
+        DEFAULT_MIME_TYPES.add(type);
+    }
+    public void setDefaultMimeTypes(String[] types) {
+        DEFAULT_MIME_TYPES.clear();
+        DEFAULT_MIME_TYPES.addAll(Arrays.asList(types));
+    }
     private void startFileChooser(WebChromeClient.FileChooserParams fileChooserParams) {
         final String[] acceptTypes = getSafeAcceptedTypes(fileChooserParams);
 
@@ -198,8 +236,8 @@ public class CustomWebViewModule extends ReactContextBaseJavaModule implements A
     }
 
     private Boolean arrayContainsString(String[] array, String pattern){
-        for(String content : array){
-            if(content.contains(pattern)){
+        for(String content : array) {
+            if (content.contains(pattern)) {
                 return true;
             }
         }
@@ -219,7 +257,7 @@ public class CustomWebViewModule extends ReactContextBaseJavaModule implements A
 
     private String[] getAcceptedMimeType(String[] types) {
         if (isArrayEmpty(types)) {
-            return DEFAULT_MIME_TYPES;
+            return DEFAULT_MIME_TYPES.toArray(new String[0]);
         }
         return types;
     }

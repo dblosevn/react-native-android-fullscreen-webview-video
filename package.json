@@ -1,25 +1,52 @@
 {
-  "name": "react-native-android-fullscreen-webview-video",
-  "version": "1.0.2",
-  "url":
-    "https://github.com/teamairship/react-native-android-fullscreen-webview-video",
+  "_from": "git+https://github.com/dblosevn/react-native-android-fullscreen-webview-video.git",
+  "_id": "react-native-android-fullscreen-webview-video@1.0.2",
+  "_inBundle": false,
+  "_integrity": "",
+  "_location": "/react-native-android-fullscreen-webview-video",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "git",
+    "raw": "https://github.com/dblosevn/react-native-android-fullscreen-webview-video.git",
+    "rawSpec": "https://github.com/dblosevn/react-native-android-fullscreen-webview-video.git",
+    "saveSpec": "git+https://github.com/dblosevn/react-native-android-fullscreen-webview-video.git",
+    "fetchSpec": "https://github.com/dblosevn/react-native-android-fullscreen-webview-video.git",
+    "gitCommittish": null
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "git+https://github.com/dblosevn/react-native-android-fullscreen-webview-video.git#b1bedc4b300d37a83132769f29b7e35e114fa0bc",
+  "_spec": "https://github.com/dblosevn/react-native-android-fullscreen-webview-video.git",
+  "_where": "/Users/dblosevn/projects/node/RNDarto",
+  "author": {
+    "name": "Airship"
+  },
+  "bugs": {
+    "url": "https://github.com/teamairship/react-native-android-fullscreen-webview-video/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
   "description": "WebView fullscreen video support for Android in React Native",
+  "homepage": "https://github.com/teamairship/react-native-android-fullscreen-webview-video#readme",
+  "keywords": [
+    "react-native",
+    "android",
+    "webview",
+    "fullscreen",
+    "video"
+  ],
+  "license": "MIT",
   "main": "index.js",
+  "name": "react-native-android-fullscreen-webview-video",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teamairship/react-native-android-fullscreen-webview-video.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["react-native", "android", "webview", "fullscreen", "video"],
-  "repository": {
-    "type": "git",
-    "url":
-      "git+https://github.com/teamairship/react-native-android-fullscreen-webview-video.git"
-  },
-  "author": "Airship",
-  "license": "MIT",
-  "bugs": {
-    "url":
-      "https://github.com/teamairship/react-native-android-fullscreen-webview-video/issues"
-  },
-  "homepage":
-    "https://github.com/teamairship/react-native-android-fullscreen-webview-video#readme"
+  "url": "https://github.com/teamairship/react-native-android-fullscreen-webview-video",
+  "version": "1.0.2"
 }

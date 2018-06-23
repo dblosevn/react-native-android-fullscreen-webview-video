@@ -23,9 +23,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 import android.view.ViewGroup.LayoutParams;
-import android.webkit.ConsoleMessage;
-import android.webkit.GeolocationPermissions;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.JavascriptInterface;
@@ -384,6 +381,20 @@ public class CustomWebViewManager extends SimpleViewManager<WebView> {
         return webView;
     }
 
+    @ReactProp(name = "forceAcceptTypes")
+    public void setForceAcceptTypes(WebView view, boolean enabled) {
+        getModule().setForceDefaultMimeTypes(enabled);
+    }
+    @ReactProp(name = "acceptTypes")
+    public void setAcceptTypes(WebView view, String type) {
+        getModule().setDefaultMimeTypes(type);
+    }
+    @ReactProp(name = "acceptTypes")
+    public void setAcceptTypes(WebView view, @Nullable ReadableArray types) {
+        if (types != null) {
+            getModule().setDefaultMimeTypes(types.toArrayList().toArray(new String[0]));
+        }
+    }
     @ReactProp(name = "javaScriptEnabled")
     public void setJavaScriptEnabled(WebView view, boolean enabled) {
         view.getSettings().setJavaScriptEnabled(enabled);
