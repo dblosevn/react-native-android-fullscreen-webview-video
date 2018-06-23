@@ -145,9 +145,9 @@ public class CustomWebViewModule extends ReactContextBaseJavaModule implements A
 
         // Create the File where the photo should go
         try {
-            String packageName = getReactApplicationContext().getPackageName();
+            String packageName = getCurrentActivity().getPackageName();
             File capturedFile = createCapturedFile(prefix, suffix);
-            outputFileUri = FileProvider.getUriForFile(getReactApplicationContext(), packageName+".fileprovider", capturedFile);
+            outputFileUri = FileProvider.getUriForFile(getReactApplicationContext(), getCurrentActivity().getPackageName() + ".fileprovider", capturedFile);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
             getCurrentActivity().startActivityForResult(intent, REQUEST_CAMERA);
         } catch (IOException ex) {

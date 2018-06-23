@@ -72,6 +72,7 @@ public class VideoWebChromeClient extends WebChromeClient {
   // it calls the photo picker intent in a separate module
   // so all the parts that need to can access other bits in scope
   // this is the way https://github.com/hushicai/ReactNativeAndroidWebView did it
+  @Override
   public boolean onShowFileChooser(
           WebView webView,
           ValueCallback<Uri[]> filePathCallback,
