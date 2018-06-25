@@ -380,7 +380,7 @@ public class CustomWebViewManager extends SimpleViewManager<WebView> {
 
         return webView;
     }
-
+/*
     @ReactProp(name = "forceAcceptTypes")
     public void setForceAcceptTypes(WebView view, boolean enabled) {
         getModule().setForceDefaultMimeTypes(enabled);
@@ -395,6 +395,7 @@ public class CustomWebViewManager extends SimpleViewManager<WebView> {
             getModule().setDefaultMimeTypes(types.toArrayList().toArray(new String[0]));
         }
     }
+*/
     @ReactProp(name = "javaScriptEnabled")
     public void setJavaScriptEnabled(WebView view, boolean enabled) {
         view.getSettings().setJavaScriptEnabled(enabled);
