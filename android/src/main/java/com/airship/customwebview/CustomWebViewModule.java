@@ -76,28 +76,7 @@ public class CustomWebViewModule extends ReactContextBaseJavaModule implements A
         case REQUEST_CAMERA:
             if (resultCode == RESULT_OK) {
                 Log.i("RESULT_OK", outputFileUri.toString());
-                try {
-                    FileOutputStream out = null;
-                    Bitmap bmp = ImageUtils.handleSamplingAndRotationBitmap(getReactApplicationContext(), outputFileUri);
-                    try {
-                        out = new FileOutputStream(capturedFile.getPath());
-                        bmp.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
-                        // PNG is a lossless format, the compression factor (100) is ignored
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    } finally {
-                        try {
-                            if (out != null) {
-                                out.close();
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        filePathCallback.onReceiveValue(new Uri[] { outputFileUri });
-                    }
-                } catch (IOException ex) {
-                    filePathCallback.onReceiveValue(new Uri[] { outputFileUri });
-                }
+                filePathCallback.onReceiveValue(new Uri[] { outputFileUri });
             } else {
                 filePathCallback.onReceiveValue(null);
             }
